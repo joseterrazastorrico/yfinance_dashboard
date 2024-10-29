@@ -7,7 +7,7 @@ import plotly.graph_objs as go
 import pandas as pd
 from datetime import datetime, timedelta
 
-# Función para cargar modelos de alarma (simulado)
+
 def load_alarm_models():
     return {
         "Simple Moving Average": lambda data: data['Close'].rolling(window=20).mean(),
@@ -17,10 +17,10 @@ def load_alarm_models():
         }
     }
 
-# Inicializar la aplicación Dash
+
 app = dash.Dash(__name__)
 
-# Layout del dashboard
+
 app.layout = html.Div([
     html.H1("Dashboard de Monitoreo de Acciones"),
     dcc.Input(id='stock-input', type='text', placeholder='Ingrese símbolo de acción'),
@@ -28,7 +28,7 @@ app.layout = html.Div([
     html.Div(id='alarm-output')
 ])
 
-# Callback para actualizar el gráfico y las alarmas
+
 @app.callback(
     [Output('stock-graph', 'figure'),
      Output('alarm-output', 'children')],
@@ -38,12 +38,10 @@ def update_graph(stock_symbol):
     if not stock_symbol:
         return dash.no_update, dash.no_update
 
-    # Obtener datos de la acción
     end_date = datetime.now()
     start_date = end_date - timedelta(days=365)
     stock_data = yf.download(stock_symbol, start=start_date, end=end_date)
 
-    # Crear gráfico
     figure = {
         'data': [go.Candlestick(
             x=stock_data.index,
@@ -57,7 +55,6 @@ def update_graph(stock_symbol):
         }
     }
 
-    # Verificar alarmas
     alarm_models = load_alarm_models()
     alarms = []
     for model_name, model_func in alarm_models.items():
